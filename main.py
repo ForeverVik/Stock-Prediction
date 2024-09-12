@@ -12,20 +12,6 @@ import pandas as pd
 #Website can be ran using the console command 'streamlit run main.py'
 #####################################################################
 
-#Set how far back to display the stock trends.
-START = '2015-01-01'
-TODAY = date.today()
-
-st.title('Stock Prediction App')
-
-#Finds the current stocks in the S&P 500 and lists them as options for prediction modeling.
-stocks = pd.read_html(
-    'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
-selectedStock = st.selectbox('Select Dataset for Prediction', stocks)
- 
-numYears = st.slider('Years of Prediction:', 1, 5)
-period = numYears * 365
-
 #Loads the data for the chosen stock and caches it so that it doesn't need to be loaded again.
 @st.cache_data
 def loadData(ticker):
@@ -55,7 +41,7 @@ def plotRawData(ticker):
         st.write(data.tail())
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name='Stock Open'))
+    #fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name='Stock Open'))
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name='Stock Close'))
     fig.update_traces(showlegend=False)
     fig.layout.update(title_text=ticker+' Stock Graph', xaxis_rangeslider_visible=True)
@@ -82,5 +68,19 @@ def plotForecastData(ticker):
 
 #Main function
 if __name__=="__main__":
+    #Set how far back to display the stock trends.
+    START = '2015-01-01'
+    TODAY = date.today()
+
+    st.title('Stock Prediction App')
+
+    #Finds the current stocks in the S&P 500 and lists them as options for prediction modeling.
+    stocks = pd.read_html(
+        'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
+    selectedStock = st.selectbox('Select Dataset for Prediction', stocks)
+    
+    numYears = st.slider('Years of Prediction:', 1, 5)
+    period = numYears * 365
+    
     plotRawData(selectedStock)
     plotForecastData(selectedStock)
